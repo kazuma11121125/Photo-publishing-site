@@ -22,5 +22,5 @@ https://github.com/akikaki-bot/imagearubamu
 ## Warning
 
 表示される画像は劣化版です。  
-必ずpublic/imagesからpublic/deteriorationにmg.pyで変換してください。ファイル名は同じ必要があります。  
+必ずpublic/imagesからpublic/deteriorationにimg.pyで変換してください。ファイル名は同じ必要があります。  
 gitset.pyは上手くいかない可能性があります。githubの仕様上2GBを超えるとpushができなくなります。そのため、1GBに分割してpushを行う自動スクリプトです。  
