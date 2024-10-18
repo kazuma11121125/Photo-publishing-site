@@ -3,8 +3,8 @@ import os
 from tqdm import tqdm
 
 # 画像フォルダのパス
-input_dir = '../public/images'
-output_dir = '../public/deterioration'
+input_dir = 'public/images'
+output_dir = 'public/deterioration'
 # 圧縮後の画像の幅
 width = 720
 

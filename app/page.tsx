@@ -19,8 +19,8 @@ async function getImages() {
             const height = (metadata.height ?? 480);
             
             return {
-                deteriorationSrc: `/NITOITA-Sports-Festival-2024/deterioration/${file}`,
-                originalSrc: `/NITOITA-Sports-Festival-2024/images/${file}`,
+                deteriorationSrc: `//Photo-publishing-site/deterioration/${file}`,
+                originalSrc: `//Photo-publishing-site/images/${file}`,
                 width,
                 height
             };
