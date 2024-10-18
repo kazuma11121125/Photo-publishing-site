@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "2024 NITOITA Sports Festival 2M",
+  title: "TEST PAGE",
   description: "Developed by kazumma",
 };
 
