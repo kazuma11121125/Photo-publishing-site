@@ -19,8 +19,8 @@ async function getImages() {
             const height = (metadata.height ?? 480);
             
             return {
-                deteriorationSrc: `//Photo-publishing-site/deterioration/${file}`,
-                originalSrc: `//Photo-publishing-site/images/${file}`,
+                deteriorationSrc: `/Photo-publishing-site/deterioration/${file}`,
+                originalSrc: `/Photo-publishing-site/images/${file}`,
                 width,
                 height
             };

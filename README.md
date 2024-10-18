@@ -18,6 +18,7 @@ end
 
 MIT. - (c) akikaki kazuma1112 2024
 
+https://github.com/akikaki-bot/imagearubamu
 ## Warning
 
 表示される画像は劣化版です。  
