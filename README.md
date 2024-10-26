@@ -8,7 +8,6 @@
 2. `set public/images`
 3. `pip install opencv-python tqdm`
 4. `python3 setuptool/img.py`
-5. `python3 setuptool/git.py`
 
 ※一部変更する必要がある可能性あり
 
@@ -23,4 +22,5 @@ https://github.com/akikaki-bot/imagearubamu
 
 表示される画像は劣化版です。  
 必ずpublic/imagesからpublic/deteriorationにimg.pyで変換してください。ファイル名は同じ必要があります。  
-gitset.pyは上手くいかない可能性があります。githubの仕様上2GBを超えるとpushができなくなります。そのため、1GBに分割してpushを行う自動スクリプトです。  
+gitset.pyは使わないでください。高確率でバグります。　　
+githubの仕様上2GBを超えるとpushができなくなります。そのため、1GBに分割してpushを行ってください。  
