@@ -8,6 +8,8 @@ import json
 input_path = str(input('input path: '))
 
 output_name = str(input('output name: '))
+output_name = output_name.replace(' ', '_')
+output_name = output_name.replace('　', '_')
 output_path = os.path.join('public/', output_name)
 
 github_base_path = "/Photo-publishing-site/"

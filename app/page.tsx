@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 export default function Home({ params }: { params: { folder?: string } }) {
-    const folder = params.folder || "OITA YUME HANABI";
+    const folder = params.folder || "OITA_YUME_HANABI";
 
     const publicPath = path.join(process.cwd(), "public");
     const folders = fs.readdirSync(publicPath, { withFileTypes: true })
