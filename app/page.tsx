@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import fs from "fs";
 import path from "path";
 
@@ -42,13 +43,13 @@ export default function Home({ params }: { params: { folder?: string } }) {
             {/* メニューバー */}
             <div className="flex space-x-4 mb-4">
                 {folders.map((folderName) => (
-                    <a key={folderName} href={`${basePath}/${folderName}`}>
+                    <Link key={folderName} href={`${basePath}/${folderName}`} passHref>
                         <button 
                             className={`px-4 py-2 ${folder === folderName ? "bg-blue-500 text-white" : "bg-gray-200"}`}
                         >
                             {folderName}
                         </button>
-                    </a>
+                    </Link>
                 ))}
             </div>
 
@@ -97,8 +98,7 @@ export async function generateStaticParams() {
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => ({ folder: dirent.name }));
 
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
     return folders.map(({ folder }) => ({
-        folder: `${basePath}/${folder}`,
+        folder, // エンコードせずにフォルダ名をそのまま使用
     }));
 }

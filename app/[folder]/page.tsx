@@ -12,8 +12,7 @@ export async function generateStaticParams() {
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => ({ folder: dirent.name }));
 
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
     return folders.map(({ folder }) => ({
-        folder: `${basePath}/${folder}`,
+        folder, // エンコードせずにフォルダ名をそのまま使用
     }));
 }
