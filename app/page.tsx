@@ -89,3 +89,12 @@ export default function Home({ params }: { params: { folder?: string } }) {
         </div>
     );
 }
+
+export async function generateStaticParams() {
+    const publicPath = path.join(process.cwd(), "public");
+    const folders = fs.readdirSync(publicPath, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => ({ folder: dirent.name }));
+
+    return folders;
+}
