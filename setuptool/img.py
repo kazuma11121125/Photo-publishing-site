@@ -1,67 +1,72 @@
 import cv2
 import os
 from tqdm import tqdm
-from PIL import Image, ImageDraw, ImageFont
-from PIL.ExifTags import TAGS
-import numpy as np
+import shutil
+import threading
+import json
 
-# 画像フォルダのパス
-input_dir = 'public/images'
-output_dir = 'public/deterioration'
-photographer_name = "kazuma1112"
+input_path = str(input('input path: '))
 
-# 圧縮後の画像の幅
-width = 720
-if not os.path.exists(output_dir):os.makedirs(output_dir)
+output_name = str(input('output name: '))
+output_path = os.path.join('public/', output_name)
 
-image_files = [f for f in os.listdir(input_dir) if f.endswith(('.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG'))]
+github_base_path = "/Photo-publishing-site/"
 
-def get_exif_data(image_path):
-    try:
-        image = Image.open(image_path)
-        exif_data = image._getexif()
-        if exif_data is not None:
-            exif_info = {}
-            for tag, value in exif_data.items():
-                tag_name = TAGS.get(tag, tag)
-                exif_info[tag_name] = value
-            return exif_info
+if not os.path.exists(output_path):os.makedirs(output_path)
+if not os.path.exists(os.path.join(output_path, 'image')):os.makedirs(os.path.join(output_path, 'image'))
+if not os.path.exists(os.path.join(output_path, 'deterioration')):os.makedirs(os.path.join(output_path, 'deterioration'))
+if not os.path.exists(os.path.join(output_path, 'images.json')):open(os.path.join(output_path, 'images.json'), 'w').close()
+with open(os.path.join(output_path, 'images.json'), 'w') as f:json.dump([], f, indent=4)
+
+# 画像ファイルのリストを取得
+image_files = [f for f in os.listdir(input_path) if f.endswith(('.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG'))]
+
+def copy():
+    print('Copying images...')
+    for image_file in tqdm(image_files, desc="Copying images", ncols=100):
+        img_path = os.path.join(input_path, image_file)
+        output_img_path = os.path.join(output_path, 'image', image_file)
+        shutil.copy(img_path, output_img_path)
+
+def resize_and_save():
+    with open(os.path.join(output_path, 'images.json'), 'r') as f:
+        json_data:list = json.load(f)
+    print('Resizing and saving images...')
+    for i, image_file in enumerate(tqdm(image_files, desc="Processing images", ncols=100)):
+        img_path = os.path.join(input_path, image_file)
+        img = cv2.imread(img_path)
+
+        if img is None:continue 
+        height, width = img.shape[:2]
+        ratio = width / height
+        if ratio > 1:
+            new_width = 720
+            new_height = int(new_width / ratio)
         else:
-            print("Exif information not found.")
-            return None
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
+            new_height = 720
+            new_width = int(new_height * ratio)
+        # 画像をリサイズ
+        resized_img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
 
-def get_datetime_and_camera(exif_info):
-    datetime_original = None
-    camera_name = None
-    if exif_info is not None:
-        datetime_original = exif_info.get('DateTimeOriginal')
-        make = exif_info.get('Make')
-        model = exif_info.get('Model')
-        camera_name = f"{make} {model}" if make and model else None
-    return datetime_original, camera_name
+        output_deterioration = os.path.join(output_path,'deterioration',image_file)
+        cv2.imwrite(output_deterioration, resized_img)
+        # JSONデータに追加
+        deteriorationSrc  = os.path.join(github_base_path,output_name, 'deterioration', image_file)
+        originalSrc = os.path.join(github_base_path,output_name, 'image', image_file)
+        json_data.append({
+            "deteriorationSrc": deteriorationSrc,
+            "originalSrc": originalSrc,
+            "width": new_width,
+            "height": new_height
+        })
+        with open(os.path.join(output_path, 'images.json'), 'w') as f:
+            json.dump(json_data, f, indent=4)
 
-def add_text_to_image(image, text, position=(10, 10), font_size=20):
-    pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(pil_image)
-    try:
-        font = ImageFont.truetype("arial.ttf", font_size) if font_size else ImageFont.load_default()
-    except IOError:
-        print("Font not found. Using default font.")
-        font = ImageFont.load_default()
-    draw.text(position, text, fill="white", font=font)
-    return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+thread_copy = threading.Thread(target=copy)
 
-for image_file in tqdm(image_files, desc="Processing images", ncols=100):
-    img_path = os.path.join(input_dir, image_file)
-    img = cv2.imread(img_path)
-    if img is None:continue 
-    height = int(img.shape[0] * (width / img.shape[1]))
-    datetime_original, camera_name = get_datetime_and_camera(get_exif_data(img_path))
-    text = f"Shooting Date: {datetime_original or 'N/A'}\nCamera: {camera_name or 'N/A'}\nPhotographer: {photographer_name}"
-    final_img = add_text_to_image(cv2.resize(img, (width, height), interpolation=cv2.INTER_AREA), text, position=(10, height - 40), font_size=10)
-    cv2.imwrite(os.path.join(output_dir, image_file), final_img)
+thread_resize = threading.Thread(target=resize_and_save)
+thread_copy.start()
+thread_resize.start()
 
-print('Done!')
+thread_copy.join()
+thread_resize.join()
