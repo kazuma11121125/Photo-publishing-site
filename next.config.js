@@ -4,7 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true, // 静的エクスポート用に必須
   },
-  basePath: "/Photo-publishing-site", // リポジトリ名と一致させる
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || "", // リポジトリ名と一致させる
   assetPrefix: "/Photo-publishing-site", // リポジトリ名と一致させる
 };
 

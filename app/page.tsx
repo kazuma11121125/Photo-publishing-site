@@ -4,6 +4,7 @@ import path from "path";
 
 export default function Home({ params }: { params: { folder?: string } }) {
     const folder = params.folder || "OITA_YUME_HANABI";
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
     const publicPath = path.join(process.cwd(), "public");
     const folders = fs.readdirSync(publicPath, { withFileTypes: true })
@@ -41,7 +42,7 @@ export default function Home({ params }: { params: { folder?: string } }) {
             {/* メニューバー */}
             <div className="flex space-x-4 mb-4">
                 {folders.map((folderName) => (
-                    <a key={folderName} href={`/${folderName}`}>
+                    <a key={folderName} href={`${basePath}/${folderName}`}>
                         <button 
                             className={`px-4 py-2 ${folder === folderName ? "bg-blue-500 text-white" : "bg-gray-200"}`}
                         >
@@ -62,14 +63,14 @@ export default function Home({ params }: { params: { folder?: string } }) {
                                     {/* 圧縮版を表示 */}
                                     <Image 
                                         alt={image.originalSrc} 
-                                        src={image.deteriorationSrc.startsWith("/") ? image.deteriorationSrc : `/${image.deteriorationSrc}`} 
+                                        src={`${basePath}${image.deteriorationSrc.startsWith("/") ? image.deteriorationSrc : `/${image.deteriorationSrc}`}`} 
                                         width={image.width}
                                         height={image.height} 
                                         quality={1}
                                     />
                                     {/* 元画像のダウンロードリンク */}
                                     <a 
-                                        href={image.originalSrc.startsWith("/") ? image.originalSrc : `/${image.originalSrc}`} 
+                                        href={`${basePath}${image.originalSrc.startsWith("/") ? image.originalSrc : `/${image.originalSrc}`}`} 
                                         download
                                     >
                                         <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
