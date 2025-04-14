@@ -97,5 +97,8 @@ export async function generateStaticParams() {
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => ({ folder: dirent.name }));
 
-    return folders;
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    return folders.map(({ folder }) => ({
+        folder: `${basePath}/${folder}`,
+    }));
 }
